@@ -71,6 +71,20 @@
       font-weight: 600;
       cursor: pointer;
     }
+    video, canvas {
+      width: 100%;
+      border-radius: 12px;
+      margin-top: 20px;
+    }
+    #captureBtn {
+      background-color: #333;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
@@ -105,33 +119,44 @@
   <div class="section">
     <h2>Optional: Create Your Future Me Photo</h2>
     <p style="text-align: center; margin-bottom: 20px;">
-      Upload a photo and see a preview of your future professional self.<br />
+      Take a photo and see a preview of your future professional self.<br />
       (In the real app, this would be AI-enhanced!)
     </p>
 
-    <label for="photoUpload">Upload Your Photo</label>
-    <input type="file" id="photoUpload" accept="image/*" onchange="previewPhoto()" />
-
-    <div id="photoPreview" style="text-align: center; margin-top: 20px;">
-      <img id="previewImage" src="" alt="Future Me Preview" style="max-width: 100%; max-height: 300px; display: none; border-radius: 12px;" />
+    <div style="text-align: center;">
+      <video id="video" autoplay playsinline></video>
+      <button id="captureBtn">Capture Photo</button>
+      <canvas id="canvas" style="display: none;"></canvas>
+      <div id="photoPreview">
+        <img id="previewImage" src="" alt="Future Me Preview" style="max-width: 100%; max-height: 300px; display: none; border-radius: 12px; margin-top: 20px;" />
+      </div>
     </div>
   </div>
 
   <script>
-    function previewPhoto() {
-      const fileInput = document.getElementById("photoUpload");
-      const previewImage = document.getElementById("previewImage");
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const captureBtn = document.getElementById('captureBtn');
+    const previewImage = document.getElementById('previewImage');
 
-      const file = fileInput.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          previewImage.src = e.target.result;
-          previewImage.style.display = "block";
-        };
-        reader.readAsDataURL(file);
-      }
+    if (navigator.mediaDevices.getUserMedia) {
+      navigator.mediaDevices.getUserMedia({ video: true })
+        .then(function (stream) {
+          video.srcObject = stream;
+        })
+        .catch(function (error) {
+          console.error("Camera access denied or unavailable.", error);
+        });
     }
+
+    captureBtn.addEventListener('click', function () {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      canvas.getContext('2d').drawImage(video, 0, 0);
+      const imageDataUrl = canvas.toDataURL('image/png');
+      previewImage.src = imageDataUrl;
+      previewImage.style.display = 'block';
+    });
   </script>
 </body>
 </html>
