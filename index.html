@@ -101,5 +101,37 @@
       <button type="submit" class="submit-btn">Send My Letter</button>
     </form>
   </div>
+
+  <div class="section">
+    <h2>Optional: Create Your Future Me Photo</h2>
+    <p style="text-align: center; margin-bottom: 20px;">
+      Upload a photo and see a preview of your future professional self.<br />
+      (In the real app, this would be AI-enhanced!)
+    </p>
+
+    <label for="photoUpload">Upload Your Photo</label>
+    <input type="file" id="photoUpload" accept="image/*" onchange="previewPhoto()" />
+
+    <div id="photoPreview" style="text-align: center; margin-top: 20px;">
+      <img id="previewImage" src="" alt="Future Me Preview" style="max-width: 100%; max-height: 300px; display: none; border-radius: 12px;" />
+    </div>
+  </div>
+
+  <script>
+    function previewPhoto() {
+      const fileInput = document.getElementById("photoUpload");
+      const previewImage = document.getElementById("previewImage");
+
+      const file = fileInput.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          previewImage.src = e.target.result;
+          previewImage.style.display = "block";
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+  </script>
 </body>
 </html>
